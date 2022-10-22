@@ -45,7 +45,6 @@ def dfs(email_cont, stack=[]):
     result = str()
     stack.append(email_cont)
     while len(stack) > 0:
-        print(len(stack))
         email_cont = stack.pop()
         if email_cont.is_multipart():
             stack.extend(email_cont.get_payload())
