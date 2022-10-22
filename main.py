@@ -11,3 +11,4 @@ def extraction(connection):
 
 
 extraction(Dao_email.connection_sqlite)
+#extraction(Dao_email.connection_sql)
