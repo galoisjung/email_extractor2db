@@ -85,8 +85,10 @@ def add(email, conection, spam=False):
     conn.close()
 
 
-def ham_get():
-    conn, curs = connection_sql()
+def ham_get(connection):
+    con_instance = connection()
+    conn = con_instance.conn
+    curs = conn.cursor
 
     query = "SELECT subject FROM ham"
 
@@ -104,8 +106,10 @@ def ham_get():
     return result
 
 
-def spam_get():
-    conn, curs = connection_sql()
+def spam_get(connection):
+    con_instance = connection()
+    conn = con_instance.conn
+    curs = conn.cursor
 
     query = "SELECT subject FROM spam"
 
