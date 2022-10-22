@@ -1,3 +1,4 @@
+import random
 from imaplib import IMAP4_SSL
 import email
 import Dao_email
@@ -5,6 +6,7 @@ import json
 
 with open('conf.json') as f:
     config = json.load(f)
+
 
 def findEncodingInfo(txt):
     info = email.header.decode_header(txt)
@@ -65,7 +67,7 @@ def dfs(email_cont, stack=[]):
     return result
 
 
-def spam_extraction():
+def spam_extraction(connection):
     mail = IMAP4_SSL("imap.gmail.com")
     mail.login(config['GMAIL_ID'], config['GMAIL_PASSWORD'])
     mail.select("[Gmail]/&yRHGlA-")
@@ -81,10 +83,10 @@ def spam_extraction():
         email_message = email.message_from_bytes(raw_email)
 
         email_obj = contents_extract(email_message)
-        Dao_email.spam_add(email_obj)
+        Dao_email.add(email_obj, connection, True)
 
 
-def ham_extraction():
+def ham_extraction(connection):
     mail = IMAP4_SSL("imap.gmail.com")
     mail.login(config['GMAIL_ID'], config['GMAIL_PASSWORD'])
     mail.select("INBOX")
@@ -100,15 +102,15 @@ def ham_extraction():
         email_message = email.message_from_bytes(raw_email)
 
         email_obj = contents_extract(email_message)
-        Dao_email.ham_add(email_obj)
+        Dao_email.add(email_obj, connection, False)
 
 
 def making_doclist(per):
     hamzip = Dao_email.ham_get()
     spamzip = Dao_email.spam_get()
 
-    hamlist = [i for i in hamzip]
-    spamlist = [i for i in spamzip]
+    hamlist = list(set([i for i in hamzip]))
+    spamlist = list(set([i for i in spamzip]))
 
     resultham = []
     resultspam = []
@@ -116,13 +118,10 @@ def making_doclist(per):
     resultham.extend(hamlist)
     resultspam.extend(spamlist)
 
-    train_set = []
-    test_set = []
+    train_set = random.sample(hamlist, int(len(hamlist) * per))
+    test_set = list(set(hamlist).difference(train_set))
 
-    train_set.extend(hamlist[0: int(len(hamlist) * per)])
-    test_set.extend(hamlist[int(len(hamlist) * per):])
-
-    train_set.extend(spamlist[0: int(len(spamlist) * per)])
-    test_set.extend(spamlist[int(len(spamlist) * per):])
+    train_set.extend(random.sample(spamlist, int(len(spamlist) * per)))
+    test_set.extend(set(spamlist).difference(train_set))
 
     return train_set, test_set
