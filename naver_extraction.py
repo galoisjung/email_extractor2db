@@ -104,9 +104,9 @@ def ham_extraction(connection):
         Dao_email.add(email_obj, connection, False)
 
 
-def making_doclist(per):
-    hamzip = Dao_email.ham_get()
-    spamzip = Dao_email.spam_get()
+def making_doclist(per, connection):
+    hamzip = Dao_email.ham_get(connection)
+    spamzip = Dao_email.spam_get(connection)
 
     hamlist = [i for i in hamzip]
     spamlist = [i for i in spamzip]
