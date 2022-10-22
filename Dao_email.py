@@ -7,7 +7,7 @@ with open('conf.json') as f:
     config = json.load(f)
 
 
-class connection_sql:
+class connection_mysql:
     def __init__(self, spam=False):
         self.conn = pymysql.connect(host='localhost', user=config["SQL_ID"], passwd=config["SQL_PASSWORD"],
                                     db=config["DB"])
@@ -88,7 +88,7 @@ def add(email, conection, spam=False):
 def ham_get(connection):
     con_instance = connection()
     conn = con_instance.conn
-    curs = conn.cursor
+    curs = conn.cursor()
 
     query = "SELECT subject FROM ham"
 
@@ -109,7 +109,7 @@ def ham_get(connection):
 def spam_get(connection):
     con_instance = connection()
     conn = con_instance.conn
-    curs = conn.cursor
+    curs = conn.cursor()
 
     query = "SELECT subject FROM spam"
 
