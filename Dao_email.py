@@ -68,6 +68,7 @@ def add(email, con_instance):
     conn = con_instance.conn
     curs = conn.cursor()
 
+    print(email['To'])
     fm = email['From']
     to = email['To']
     date = email['Date']

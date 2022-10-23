@@ -24,7 +24,13 @@ def contents_extract(email):
         result['From'] = email_from.group(1)
     else:
         result['From'] = email['From']
-    result['To'] = email['To']
+
+    email_to = re.search("<(.+)[>]", str(email['To']))
+    if email_to != None:
+        result['To'] = email_from.group(1)
+    else:
+        result['To'] = email['To']
+
     result['Date'] = email['Date']
 
     if email['Subject'] is not None:
