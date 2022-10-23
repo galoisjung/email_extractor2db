@@ -65,7 +65,6 @@ class connection_sqlite:
 
 
 def add(email, con_instance):
-
     conn = con_instance.conn
     curs = conn.cursor()
 

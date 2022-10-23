@@ -1,4 +1,5 @@
 import json
+import re
 from imaplib import IMAP4_SSL
 import email
 import Dao_email
@@ -17,7 +18,11 @@ def findEncodingInfo(txt):
 def contents_extract(email):
     result = dict()
 
-    result['From'] = email['From']
+    email_from = re.search("<(.+)[>]", email['From'])
+    if email_from != None:
+        result['From'] = email_from.group(1)
+    else:
+        result['From'] = email['From']
     result['To'] = email['To']
     result['Date'] = email['Date']
 
