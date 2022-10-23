@@ -75,6 +75,8 @@ def spam_extraction(connection):
 
     all_email = data[0].split()
 
+    con_instance = connection(True)
+
     for i in all_email:
         print(i)
         result, maildata = mail.uid('fetch', i, '(RFC822)')
@@ -82,7 +84,8 @@ def spam_extraction(connection):
         email_message = email.message_from_bytes(raw_email)
 
         email_obj = contents_extract(email_message)
-        Dao_email.add(email_obj, connection, True)
+        Dao_email.add(email_obj, con_instance)
+    con_instance.conn.close()
 
 
 def ham_extraction(connection):
@@ -94,6 +97,8 @@ def ham_extraction(connection):
 
     all_email = data[0].split()
 
+    con_instance = connection(False)
+
     for i in all_email:
         print(i)
         result, maildata = mail.uid('fetch', i, '(RFC822)')
@@ -101,11 +106,11 @@ def ham_extraction(connection):
         email_message = email.message_from_bytes(raw_email)
 
         email_obj = contents_extract(email_message)
-        Dao_email.add(email_obj, connection, False)
+        Dao_email.add(email_obj, con_instance)
+    con_instance.conn.close()
 
 
 def making_doclist(per, connection):
-
     hamzip = Dao_email.ham_get(connection)
     spamzip = Dao_email.spam_get(connection)
 
@@ -121,9 +126,8 @@ def making_doclist(per, connection):
     ham_rand = np.random.rand(ham_arr.shape[0])
     spam_rand = np.random.rand(spam_arr.shape[0])
 
-    ham_split = ham_rand < np.percentile(ham_rand, per*100)
-    spam_split = spam_rand < np.percentile(spam_rand, per*100)
-
+    ham_split = ham_rand < np.percentile(ham_rand, per * 100)
+    spam_split = spam_rand < np.percentile(spam_rand, per * 100)
 
     ham_train = ham_arr[ham_split]
     spam_train = spam_arr[spam_split]
@@ -137,4 +141,3 @@ def making_doclist(per, connection):
     test_set.extend(spam_test.tolist())
 
     return train_set, test_set
-
