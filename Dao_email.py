@@ -38,7 +38,7 @@ class connection_mysql:
 
 class connection_sqlite:
     def __init__(self, spam=False):
-        self.conn = sqlite3.connect("email.db")
+        self.conn = sqlite3.connect("emails.db")
 
         if not spam:
             self.query_1 = '''
